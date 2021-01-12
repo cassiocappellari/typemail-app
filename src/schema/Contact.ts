@@ -11,7 +11,7 @@ const ContactSchema = new Schema(
             unique: true,
             required: true
         },
-        tags: [
+        tags: [ // relacionamento de email com as tags
             {
                 type: Schema.Types.ObjectId,
                 ref: 'Tag',
