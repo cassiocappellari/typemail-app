@@ -19,5 +19,5 @@
       "@services/*": ["./services/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "tests"] // faz com que tanta a pasta 'src' quanto a pasta 'tests' seja rodado pelo typescript
 }
