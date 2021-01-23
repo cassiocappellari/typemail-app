@@ -41,7 +41,7 @@ describe('Import', () => {
 
         expect(createdTags).toEqual([ // verifica se as tags foram criadas
             expect.arrayContaining([
-                expect.objectContaining({title: 'Students'}),
+                expect.objectContaining({title: 'Students'}), // teste
                 expect.objectContaining({title: 'Class A'})
             ])
         ])
