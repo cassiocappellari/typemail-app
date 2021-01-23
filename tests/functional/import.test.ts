@@ -23,43 +23,48 @@ describe('Import', () => {
 
     beforeEach(async () => {
         await Contact.deleteMany({})
+        await Tag.deleteMany({})
     })
 
     it('should be able to import new contacts', async () => {
         const contactsFileStream = Readable.from([
-            'cassiocappellari@gmail.com',
-            'tatifff@gmail.com',
-            'luizacappellari@gmail.com'
+            'cassiocappellari@gmail.com\n', // '\n' coloca uma linha em branco após cada contato para simular um CSV onde cada email fica em uma linha
+            'tatifff@gmail.com\n',
+            'luizacappellari@gmail.com\n'
         ])
 
         const importContacts = new ImportContact()
 
         await importContacts.run(contactsFileStream, ['Students', 'Class A'])
 
-        const createdTags = await Tag.find({})
+        const createdTags = await Tag.find({}).lean() // o método 'lean()' faz com que o retorno do banco de dados MongoDB seja um objeto JavaScript
 
-        expect(createdTags).toEqual([
-            expect.objectContaining({title: 'Students'}),
-            expect.objectContaining({title: 'Class A'})
+        expect(createdTags).toEqual([ // verifica se as tags foram criadas
+            expect.arrayContaining([
+                expect.objectContaining({title: 'Students'}),
+                expect.objectContaining({title: 'Class A'})
+            ])
         ])
 
-        const createdTagsIds = createdTags.map(tag => tag.id)
+        const createdTagsIds = createdTags.map(tag => tag._id)
 
-        const createdContacts = await Contact.find({})
+        const createdContacts = await Contact.find({}).lean() // o método 'lean()' faz com que o retorno do banco de dados MongoDB seja um objeto JavaScript
 
-        expect(createdContacts).toEqual([
-            expect.objectContaining({
-                email: 'cassiocappellari@gmail.com',
-                tags: createdTagsIds
-            }),
-            expect.objectContaining({
-                email: 'tatifff@gmail.com',
-                tags: createdTagsIds
-            }),
-            expect.objectContaining({
-                email: 'luizacappellari@gmail.com',
-                tags: createdTagsIds
-            })
+        expect(createdContacts).toEqual([ // verifica se os contatos foram criados com as tags
+            expect.arrayContaining([
+                expect.objectContaining({
+                    email: 'cassiocappellari@gmail.com',
+                    tags: createdTagsIds
+                }),
+                expect.objectContaining({
+                    email: 'tatifff@gmail.com',
+                    tags: createdTagsIds
+                }),
+                expect.objectContaining({
+                    email: 'luizacappellari@gmail.com',
+                    tags: createdTagsIds
+                })
+            ])
         ])
     })
 })
